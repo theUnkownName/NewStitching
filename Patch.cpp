@@ -5,7 +5,9 @@ Patch::Patch(bool target, int numberOfPatch, int position, Ogre::SceneManager* m
 	isTarget = false;
 	Ogre::Vector3 bbsize = Ogre::Vector3::ZERO; //Boundingbox size
 	//Ogre::Vector3 scale(0.2, 0.2, 0.2);
-	Ogre::Vector3 scale(1,1,1);
+	Ogre::Vector3 scale(0.5, 0.5, 0.5);
+	Ogre::Quaternion rotation(Ogre::Degree(180), Ogre::Vector3::UNIT_Y); 
+	Ogre::Quaternion rotation2(Ogre::Degree(180), Ogre::Vector3::UNIT_Z); 
 
 	available = true;
 	nodeName = "node" + Ogre::StringConverter::toString(numberOfPatch);
@@ -49,12 +51,20 @@ Patch::Patch(bool target, int numberOfPatch, int position, Ogre::SceneManager* m
 	}
 	node->attachObject(ent);
 	node->scale(scale);
+	node->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL);
+	node->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
 	Ogre::AxisAlignedBox bb = ent->getBoundingBox();
 	bbsize = bb.getSize();
+	p_centerX = bbsize.x/2;
+	p_centerY = bbsize.y/2;
 }
 
 Patch::Patch(bool target, Ogre::Entity* targetPatch)						//Target
 {
+	std::vector<Ogre::Vector3> temporalList;
+	bool flag = false;
+
+	std::vector<Ogre::Vector3> verticesList;
 	size_t vertex_count,index_count;
 	unsigned* indices;
 	std::vector<Ogre::Vector3> vertices;														//Four vertices per patch
@@ -64,6 +74,30 @@ Patch::Patch(bool target, Ogre::Entity* targetPatch)						//Target
 	Ogre::Vector3 scale = targetPatch->getParentSceneNode()->getScale();
 	Ogre::Quaternion orientation = targetPatch->getParentSceneNode()->getOrientation();
 	std::tie(m_vertices, m_indices) = getMeshInformation(&targetPatch->getMesh(),vertex_count,index_count,indices, pos, orientation, scale);
+
+	verticesList = m_vertices;
+	temporalList.push_back(verticesList[0]);
+	for (int i = 1; i < verticesList.size(); i++)
+	{
+		Ogre::Vector3 temp;
+		temp = verticesList[i];													//start comparing from the first element
+		for (int j = i-1; j >= 0; j--)
+		{
+			if (temp == verticesList[j])
+			{
+				flag = true;
+			}
+		}
+		
+		if (flag == false)
+		{
+			temporalList.push_back(temp);
+		}
+		flag = false;
+	}
+
+	m_vertices.clear();
+	m_vertices = temporalList;
 }
 
 void Patch::getSideVertices(std::vector<Ogre::Vector3> verticesTemplate, int centerX, int centerY)
@@ -104,6 +138,7 @@ void Patch::removeFromErrorList(GridCell* cell)
 void Patch::computeError(Patch* target, int s1, int s2, OgreBites::ParamsPanel* mDetailsPanel, PatchSide patch_side, Patch* patch, GridCell* cell, int patchId)
 {
 	double error = 0.0;
+	Ogre::Real temperror;
 	std::vector<Ogre::Vector3> sideP;
 	std::vector<Ogre::Vector3> sideT;
 	PatchSide pSide;
@@ -115,12 +150,11 @@ void Patch::computeError(Patch* target, int s1, int s2, OgreBites::ParamsPanel* 
 		Ogre::Real temperror = 0.0;
 		for (std::size_t vertexTemplate = 0; vertexTemplate < sideT.size(); vertexTemplate++ )
 			{
-				Ogre::Real r = sideP[vertexPatch].distance(sideT[vertexTemplate]);
-				temperror += Ogre::Math::Sqrt(r * r); 
+				temperror += sideP[vertexPatch].distance(sideT[vertexTemplate]);
 			}
 		error += temperror;	
 	}
-	error = error / (sideP.size() * sideT.size());
+	error = Ogre::Math::Sqrt((error)/(sideP.size() * sideT.size()));
 	pSide = getSideFromInt(s1);
 	bestErrorOfPatch current_error;
 	current_error.error = error;
@@ -218,9 +252,9 @@ void Patch::translatePatch(int centerX, int centerY, int z_position, Ogre::Scene
 {
 
 	isTarget = false;													//Targets never are moved. If the patch is moving, is not a target
-	p_centerX = centerX;
-	p_centerY = centerY;
 	Ogre::Vector3 originVertex;
+
+	
 
 	Ogre::Vector3 pos; 
 	Ogre::Vector3 scale; 
@@ -236,11 +270,12 @@ void Patch::translatePatch(int centerX, int centerY, int z_position, Ogre::Scene
 	scale =  mSceneMgr->getSceneNode(nodeName)->getScale();
 	orientation =  mSceneMgr->getSceneNode(nodeName)->getOrientation();
 	std::tie(m_vertices, m_indices) = getMeshInformation(&mSceneMgr->getEntity(entName)->getMesh(),vertex_count,index_count,indices, pos, orientation, scale);
+	deleteRepeatedVertices();
 	
 	getSideVertices(m_vertices, centerX, centerY);
 	mRoot->renderOneFrame();
 	m_orientation = orientation;
-	Sleep(70);
+	//Sleep(70);
 }
 
 void Patch::translatePatchDeffinitve(Ogre::SceneManager* mSceneMgr, bestErrorOfPatch bestFitOverall, int centerX, int centerY)
@@ -283,6 +318,7 @@ void Patch::rotatePatch(Ogre::SceneManager* mSceneMgr, int centerX, int centerY)
 	scale =  mSceneMgr->getSceneNode(nodeName)->getScale();
 	orientation =  mSceneMgr->getSceneNode(nodeName)->getOrientation();
 	std::tie(m_vertices, m_indices) = getMeshInformation(&mSceneMgr->getEntity(entName)->getMesh(),vertex_count,index_count,indices, pos, orientation, scale);
+	deleteRepeatedVertices();
 
 	getSideVertices(m_vertices, centerX, centerY);
 	m_orientation = orientation;
@@ -293,6 +329,41 @@ void Patch::becomesTarget()
 	isTarget = true;
 }
 
+void Patch::deleteRepeatedVertices()
+{
+	/////////////////////////////////////////
+	//*eliminate duplicated vertices 
+	//* returns 8 vertices, 4 per for the front face and 4 for the back face
+	/////////////////////////////////////////
+
+	std::vector<Ogre::Vector3> temporalList;
+	std::vector<Ogre::Vector3> verticesList;
+	bool flag = false;
+	
+	verticesList = m_vertices;
+	temporalList.push_back(verticesList[0]);
+	for (int i = 1; i < verticesList.size(); i++)
+	{
+		Ogre::Vector3 temp;
+		temp = verticesList[i];													//start comparing from the first element
+		for (int j = i-1; j >= 0; j--)
+		{
+			if (temp == verticesList[j])
+			{
+				flag = true;
+			}
+		}
+		
+		if (flag == false)
+		{
+			temporalList.push_back(temp);
+		}
+		flag = false;
+	}
+
+	m_vertices.clear();
+	m_vertices = temporalList;
+}
 
 std::pair<std::vector<Ogre::Vector3>,std::vector<int>> Patch::getMeshInformation(const Ogre::MeshPtr* meshPtr,
 									  size_t &vertex_count,
