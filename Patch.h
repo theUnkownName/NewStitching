@@ -57,6 +57,7 @@ public:
 	PatchSide getSideFromInt(int);
 	std::pair<std::vector<Ogre::Vector3>, std::vector<Ogre::Vector3>> Patch::choseSide(Patch*, int pSide, int tSide);						//picks patch and template side 
 	void removeFromErrorList(GridCell* cell);
+	void deleteRepeatedVertices();
 
 	std::vector<Ogre::Vector3> m_vertices;														//Four vertices per patch
 	std::vector<int> m_indices;

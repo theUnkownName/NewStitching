@@ -62,25 +62,7 @@ bool GridCell::isFree()
 	 p->becomesTarget();
  }
  
- void GridCell::getSideVertices(Patch* p)
- {
-	 p->m_rightside_vertices.clear();
-	 p->m_topside_vertices.clear();
-	 p->m_leftside_vertices.clear();
-	 p->m_bottomside_vertices.clear();
 
-	for (int i = 0; i < 8 ; i++)
-	{
-		if (p->m_vertices[i].x > c_centerX)																		//Bigger than center point in X, will be right side
-			p->m_rightside_vertices.push_back(p->m_vertices[i]);
-		else																									//Minor than center point in x, will be left side
-			p->m_leftside_vertices.push_back(p->m_vertices[i]);													
-		if(p->m_vertices[i].y > c_centerY)																		//Bigger than center point in y, will be top
-			p->m_topside_vertices.push_back(p->m_vertices[i]);
-		else																									//Minor than center point in y, will be Bottom
-			p->m_bottomside_vertices.push_back(p->m_vertices[i]);
-	}
- }
 
  void GridCell::updateSideVertices(Patch* p)								//Should i keep this?
  {
@@ -194,7 +176,7 @@ void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, Ogr
 				{	
 					patch->rotatePatch(mSceneMgr, centerX, centerY);								//Rotate patch (Create new vertices after 90 degres rotation)
 					mRoot->renderOneFrame();
-					Sleep(70);
+					//Sleep(70);
 				}
 				side++;																					//Change the side, for each rotation
 				if(side > 3){																			//If the side is BOTTOM (3) go to the RIGHT side that is zero

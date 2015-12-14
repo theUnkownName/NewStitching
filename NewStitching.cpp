@@ -278,14 +278,19 @@ void NewStitching::createGrid(int height_grid, int width_grid)
 
 void NewStitching::createTemplate()
 {
-	//Ogre::Vector3 scale(0.2, 0.2, 0.2);
-	Ogre::Vector3 scale(1,1,1);
+	Ogre::Quaternion rotation(Ogre::Degree(-180), Ogre::Vector3::UNIT_Y); 
+	Ogre::Quaternion rotation2(Ogre::Degree(180), Ogre::Vector3::UNIT_Z); 
+	Ogre::Vector3 scale(0.5, 0.5, 0.5);
+	//Ogre::Vector3 scale(1,1,1);
 	//Create the mesh (patch)
 	Ogre::Entity *targetPatch = mSceneMgr->createEntity("target", "mm.mesh");
 	Ogre::SceneNode* targetNode = mSceneMgr->getSceneNode("grid")->createChildSceneNode();
 	targetNode->scale(scale);
 	targetNode->translate(30,30,0);
+	targetNode->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL);
+	targetNode->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
 	targetNode->attachObject(targetPatch);
+
 }
 
 void NewStitching::createPatches()
