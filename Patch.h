@@ -33,7 +33,7 @@ class Patch
 {
 public:
 	//Constructors
-	Patch(bool, int, int, Ogre::SceneManager*);
+	Patch(bool target, int numberOfPatch, Ogre::SceneManager*);
 	Patch(bool, Ogre::Entity*); //isTarget, vertices of the patch
 	
 	//Destructor
@@ -90,4 +90,3 @@ public:
 };
 
 #endif
-

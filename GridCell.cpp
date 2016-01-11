@@ -208,12 +208,12 @@ void Grid::transverseGrid(Patch* patch, Patch* target, Ogre::SceneManager* mScen
 					getNeighbours(i_grid, j_grid);																		//Get a vector of neighbours cells where stitching is possible
 					std::tie(centerX, centerY) = retrieveXY(i_grid,j_grid);												//Get x and y coordinates of the patch according to the cell 	
 					updatePossibleCell(i_grid, j_grid, centerX, centerY, patch);
-					for (std::size_t translation_Number = 0; translation_Number < 3; translation_Number++)				//Translate in "Z" three times
-					{ 
-						z_position = getPositionInZ(translation_Number);		
+				//	for (std::size_t translation_Number = 0; translation_Number < 3; translation_Number++)				//Translate in "Z" three times
+				//	{ 
+					//	z_position = getPositionInZ(translation_Number);		
 						patch->translatePatch(centerX, centerY, z_position, mSceneMgr, mRoot);									//Translates the patch to the correct cell				
- 						rotate4Times(target, patch, i_grid, j_grid, mDetailsPanel, mSceneMgr, patchId, mRoot, centerX, centerY);		//Rotate the patch 4 times and calculate the error
-					}
+						rotate4Times(target, patch, i_grid, j_grid, mDetailsPanel, mSceneMgr, patchId, mRoot, centerX, centerY);		//Rotate the patch 4 times and calculate the error
+				//	}
 				}
 			}														
 		}

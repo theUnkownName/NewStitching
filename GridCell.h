@@ -1,6 +1,7 @@
 #pragma once
 #ifndef __GRIDCELL_H
 #define __GRIDCELL_H
+
 #include "Patch.h"
 #include <iostream>
 #include <cmath>
@@ -82,6 +83,7 @@ public:
 	std::vector<bestErrorOfPatch> _bestFitOfPatch;
 	std::vector<int> patchesUsed;	
 };
+
 
 #endif
 

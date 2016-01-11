@@ -88,7 +88,7 @@ private:
   bool mShutdown;
 	
   Ogre::Root* mRoot;
-  Ogre::Camera* mCamera;
+  Ogre::Camera* mCameraFront;
   Ogre::SceneManager* mSceneMgr;
   Ogre::RenderWindow* mWindow;
   Ogre::String mResourcesCfg;
@@ -121,6 +121,10 @@ private:
 
   bool mouseFlag;
   std::vector<Patch*> _patches;
+
+
+
+  Ogre::RaySceneQuery* m_pray_scene_query;
 };
  
 #endif
