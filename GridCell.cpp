@@ -159,11 +159,10 @@ std::pair<int, int> Grid::retrieveXY(int x, int y)			//Retrieve the centerx and 
 void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, OgreBites::ParamsPanel* mDetailsPanel, Ogre::SceneManager* mSceneMgr, int patchId, Ogre::Root* mRoot, int centerX, int centerY)
 {
 	int side;
-	for (int rotationNumber = 0; rotationNumber < 4; rotationNumber++)
+	for (int rotationNumber = 0; rotationNumber < 4; rotationNumber++)								//Rotate 4 times
 	{
-		for (std::size_t neighbor = 0; neighbor < m_neighbours.size(); neighbor++)
+		for (std::size_t neighbor = 0; neighbor < m_neighbours.size(); neighbor++)					//For every neighbour
 		{
-			
 			target = std::get<2>(m_neighbours[neighbor]);																//Get the target from the neighbours vector
 			patch->patch_side = std::get<0>(m_neighbours[neighbor]);
 			
@@ -176,7 +175,6 @@ void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, Ogr
 				{	
 					patch->rotatePatch(mSceneMgr, centerX, centerY);								//Rotate patch (Create new vertices after 90 degres rotation)
 					mRoot->renderOneFrame();
-					//Sleep(70);
 				}
 				side++;																					//Change the side, for each rotation
 				if(side > 3){																			//If the side is BOTTOM (3) go to the RIGHT side that is zero
@@ -184,9 +182,9 @@ void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, Ogr
 				patch->patch_side = patch->getSideFromInt(side);
 				patch->computeError(target, pSide[neighbor], tSide[neighbor], mDetailsPanel, patch->patch_side, patch, m_grid[i_grid][j_grid], patchId);			
 			}
-		}								
+		}
 	}		
-	patch->rotatePatch(mSceneMgr, centerX, centerY);												//Return to original position
+	//patch->rotatePatch(mSceneMgr, centerX, centerY);												//Return to original position
 }
 
 void Grid::transverseGrid(Patch* patch, Patch* target, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot, OgreBites::ParamsPanel* mDetailsPanel, int patchId, int numberOfCells)
@@ -208,12 +206,12 @@ void Grid::transverseGrid(Patch* patch, Patch* target, Ogre::SceneManager* mScen
 					getNeighbours(i_grid, j_grid);																		//Get a vector of neighbours cells where stitching is possible
 					std::tie(centerX, centerY) = retrieveXY(i_grid,j_grid);												//Get x and y coordinates of the patch according to the cell 	
 					updatePossibleCell(i_grid, j_grid, centerX, centerY, patch);
-				//	for (std::size_t translation_Number = 0; translation_Number < 3; translation_Number++)				//Translate in "Z" three times
-				//	{ 
+					//for (std::size_t translation_Number = 0; translation_Number < 3; translation_Number++)				//Translate in "Z" three times
+					//{ 
 					//	z_position = getPositionInZ(translation_Number);		
 						patch->translatePatch(centerX, centerY, z_position, mSceneMgr, mRoot);									//Translates the patch to the correct cell				
 						rotate4Times(target, patch, i_grid, j_grid, mDetailsPanel, mSceneMgr, patchId, mRoot, centerX, centerY);		//Rotate the patch 4 times and calculate the error
-				//	}
+					//}
 				}
 			}														
 		}
@@ -256,7 +254,6 @@ bestErrorOfPatch Grid::bestFitOfPatch(Patch* p)
 	bestFitOfPatch.orientation = orientation;
 	return bestFitOfPatch;
 }
-
 
 bestErrorOfPatch Grid::bestFitInGrid(std::vector<bestErrorOfPatch> bfit)
 {

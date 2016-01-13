@@ -4,7 +4,6 @@ Patch::Patch(bool target, int numberOfPatch, Ogre::SceneManager* mSceneMgr)
 {
 	isTarget = false;
 	Ogre::Vector3 bbsize = Ogre::Vector3::ZERO; //Boundingbox size
-	//Ogre::Vector3 scale(0.2, 0.2, 0.2);
 	Ogre::Vector3 scale(0.5, 0.5, 0.5);
 	Ogre::Quaternion rotation(Ogre::Degree(180), Ogre::Vector3::UNIT_Y); 
 	Ogre::Quaternion rotation2(Ogre::Degree(180), Ogre::Vector3::UNIT_Z); 
@@ -22,29 +21,29 @@ Patch::Patch(bool target, int numberOfPatch, Ogre::SceneManager* mSceneMgr)
 	switch (numberOfPatch)
 	{
 	case(0):
-		mSceneMgr->getSceneNode(nodeName)->translate(0,-60,0);		
+		mSceneMgr->getSceneNode(nodeName)->translate(70,0,0);		
 	//	ogreNode->attachObject(ogreEnt);
 		break;
 	case(1):
-		mSceneMgr->getSceneNode(nodeName)->translate(0,-40,0);																
+		mSceneMgr->getSceneNode(nodeName)->translate(70,20,0);																
 		break;
 	case(2):
-		mSceneMgr->getSceneNode(nodeName)->translate(0,-20,0);;
+		mSceneMgr->getSceneNode(nodeName)->translate(70,40,0);;
 		break;
 	case(3):
-		mSceneMgr->getSceneNode(nodeName)->translate(20,-60,0);
+		mSceneMgr->getSceneNode(nodeName)->translate(70,60,0);
 		break;
 	case(4):
-		mSceneMgr->getSceneNode(nodeName)->translate(20,-20,0);
+		mSceneMgr->getSceneNode(nodeName)->translate(90,0,0);
 		break;
 	case(5):
-		mSceneMgr->getSceneNode(nodeName)->translate(40,-60,0);
+		mSceneMgr->getSceneNode(nodeName)->translate(90,20,0);
 		break;
 	case(6):
-		mSceneMgr->getSceneNode(nodeName)->translate(40,-40,0);
+		mSceneMgr->getSceneNode(nodeName)->translate(90,40,0);
 		break;
 	case(7):
-		mSceneMgr->getSceneNode(nodeName)->translate(40,-20,0);
+		mSceneMgr->getSceneNode(nodeName)->translate(90,60,0);
 		break;
 	default:
 		break;
@@ -54,16 +53,18 @@ Patch::Patch(bool target, int numberOfPatch, Ogre::SceneManager* mSceneMgr)
 	node->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL);
 	node->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
 	Ogre::AxisAlignedBox bb = ent->getBoundingBox();
-	node->showBoundingBox(true);
 	bbsize = bb.getSize();
 	p_centerX = bbsize.x/2;
 	p_centerY = bbsize.y/2;
+	p_width = bbsize.x;
+	p_height = bbsize.y;
 }
 
 Patch::Patch(bool target, Ogre::Entity* targetPatch)						//Target
 {
 	std::vector<Ogre::Vector3> temporalList;
 	bool flag = false;
+	Ogre::Vector3 bbsize = Ogre::Vector3::ZERO; //Boundingbox size
 
 	std::vector<Ogre::Vector3> verticesList;
 	size_t vertex_count,index_count;
@@ -99,6 +100,13 @@ Patch::Patch(bool target, Ogre::Entity* targetPatch)						//Target
 
 	m_vertices.clear();
 	m_vertices = temporalList;
+
+	Ogre::AxisAlignedBox bb = targetPatch->getBoundingBox();
+	bbsize = bb.getSize();
+	p_centerX = bbsize.x/2;
+	p_centerY = bbsize.y/2;
+	p_width = bbsize.x;
+	p_height = bbsize.y;
 }
 
 void Patch::getSideVertices(std::vector<Ogre::Vector3> verticesTemplate, int centerX, int centerY)
@@ -109,19 +117,44 @@ void Patch::getSideVertices(std::vector<Ogre::Vector3> verticesTemplate, int cen
 	m_leftside_vertices.clear();
 	m_bottomside_vertices.clear();
 
+	//Offset is the center poing plus an arbitrary value 
+	double offsetX1 = centerX + 9.5; //To the right from the center point
+	double offsetX2 = centerX - 9.5;	//To the left
+	double offsetY1 = centerY + 9.5;  //To the top
+	double offsetY2 = centerY - 9.5;  //To the bottom
+
+	//Apply offset here
 	for (std::size_t i = 0; i < verticesTemplate.size(); i++)
 	{
-		if (verticesTemplate[i].x > centerX)													//Bigger than originX, will be right side
+		if (verticesTemplate[i].x > offsetX1)													//Bigger than originX, will be right side
 			m_rightside_vertices.push_back(verticesTemplate[i]);
-		else
+		else if(verticesTemplate[i].x < offsetX2)
 			m_leftside_vertices.push_back(verticesTemplate[i]);									//Smaller than OriginX, will be left side
-		if(verticesTemplate[i].y > centerY)												
+		if(verticesTemplate[i].y > offsetY1)												
 			m_topside_vertices.push_back(verticesTemplate[i]);									//Bigger than originY, will be top side
-		else
+		else if (verticesTemplate[i].y < offsetY2)	
 			m_bottomside_vertices.push_back(verticesTemplate[i]);								//Smaller than originY, will be bottom side
 	}
-}
 
+	//for (std::size_t i = 0; i < verticesTemplate.size(); i++)
+	//{
+	//	if (verticesTemplate[i].x > centerX)													//Bigger than centerX
+	//	{
+	//		if(verticesTemplate[i].y > centerY)													//Bigger than centerY
+	//			thirdQuarterVertices.push_back(verticesTemplate[i]);
+	//		else if (verticesTemplate[i].y < centerY)											//Smallerr than centerY
+	//			fourhtQuarterVertices.push_back(verticesTemplate[i]);
+	//	}
+	//	else if (verticesTemplate[i].x < centerX)
+	//	{
+	//		if(verticesTemplate[i].y > centerY)													//Bigger than centerY
+	//			secondQuarterVertices.push_back(verticesTemplate[i]);
+	//		else if (verticesTemplate[i].y < centerY)											//Smallerr than centerY
+	//			firstQuarterVertices.push_back(verticesTemplate[i]);
+	//	}
+	//}
+
+}
 
 void Patch::removeFromErrorList(GridCell* cell)
 {
@@ -144,33 +177,32 @@ void Patch::computeError(Patch* target, int s1, int s2, OgreBites::ParamsPanel* 
 	std::vector<Ogre::Vector3> sideP;
 	std::vector<Ogre::Vector3> sideT;
 	PatchSide pSide;
+	PatchSide offsetOrient;
+	double offset = p_centerX / 2; //TODO; make it automatically with the size of the Patches
 
-
-
-	std::tie(sideP, sideT) = choseSide(target, s1, s2);													//Chose sideList (m_rightside_vertices,m_topside_vertices...)
-
+	std::tie(sideP, sideT) = choseSide(target, s1, s2);
 	for(std::size_t vertexPatch = 0; vertexPatch < sideP.size(); vertexPatch++)
 	{
 		Ogre::Real temperror = 0.0;
 		for (std::size_t vertexTemplate = 0; vertexTemplate < sideT.size(); vertexTemplate++ )
 			{
 				Ogre::Real r = sideP[vertexPatch].distance(sideT[vertexTemplate]);
-				temperror += r;
+				temperror += r * r;
 			}
 		error += temperror;	
 	}
-	error = Ogre::Math::Sqrt((error)/(sideP.size() * sideT.size()));
+	error = Ogre::Math::Sqrt((error / (sideP.size() * sideT.size())) - 2);
 	pSide = getSideFromInt(s1);
 	bestErrorOfPatch current_error;
 	current_error.error = error;
-	current_error.side = patch_side;
+	//current_error.side = patch_side;
 	current_error.vertices = m_vertices;
 	current_error.cell = cell;
 	current_error.patchId = patchId;
 	current_error.orientation = m_orientation;
 	m_curError.push_back(current_error);
-	mDetailsPanel->setParamValue(0, Ogre::StringConverter::toString(patch_side).c_str());	
-	mDetailsPanel->setParamValue(1, Ogre::StringConverter::toString(s2).c_str());	
+	//mDetailsPanel->setParamValue(0, Ogre::StringConverter::toString(patch_side).c_str());	
+	//mDetailsPanel->setParamValue(1, Ogre::StringConverter::toString(s2).c_str());	
 	mDetailsPanel->setParamValue(2, Ogre::StringConverter::toString(error).c_str());	
 }
 
@@ -200,6 +232,7 @@ std::pair<std::vector<Ogre::Vector3>,std::vector<Ogre::Vector3>> Patch::choseSid
 {
 	std::vector<Ogre::Vector3> sideP;
 	std::vector<Ogre::Vector3> sideT;
+	double offset = p_centerX + p_centerX/2; //30
 	
 
 	switch (pSide)	{	
@@ -215,6 +248,59 @@ std::pair<std::vector<Ogre::Vector3>,std::vector<Ogre::Vector3>> Patch::choseSid
 	case(2):sideT = target->m_leftside_vertices;	break;
 	case(3):sideT = target->m_bottomside_vertices;	break;
 	}
+
+
+	/*switch (pSide)	{	
+		case(RIGHT):
+			for (int i = 0; i <  m_rightside_vertices.size(); i++)
+			{
+				if(m_rightside_vertices[i].x > offset)	
+					sideP.push_back(m_rightside_vertices[i]);
+			}break;
+		case(TOP):for (int i = 0; i <  m_topside_vertices.size(); i++)
+			{
+				if(m_topside_vertices[i].y > offset)	
+					sideP.push_back(m_topside_vertices[i]);
+			}break;
+		case(LEFT):
+			for (int i = 0; i <  m_leftside_vertices.size(); i++)
+			{
+				if(m_leftside_vertices[i].x < offset )	
+					sideP.push_back(m_leftside_vertices[i]);
+			}break;
+		case(BOTTOM):
+			for (int i = 0; i <  m_bottomside_vertices.size(); i++)
+			{
+				if(m_bottomside_vertices[i].y < offset)	
+					sideP.push_back(m_bottomside_vertices[i]);
+			}break;
+		}
+
+	switch (tSide)	{	
+		case(RIGHT):
+			for (int i = 0; i <  target->m_rightside_vertices.size(); i++)
+			{
+				if(target->m_rightside_vertices[i].x < offset + p_centerX)	
+					sideT.push_back(target->m_rightside_vertices[i]);
+			}break;
+		case(TOP):for (int i = 0; i <  target->m_topside_vertices.size(); i++)
+			{
+				if(target->m_topside_vertices[i].y < offset + p_centerY)	
+					sideT.push_back(target->m_topside_vertices[i]);
+			}break;
+		case(LEFT):
+			for (int i = 0; i <  target->m_leftside_vertices.size(); i++)
+			{
+				if(target->m_leftside_vertices[i].x < offset - p_centerX)	
+					sideT.push_back(target->m_leftside_vertices[i]);
+			}break;
+		case(BOTTOM):
+			for (int i = 0; i <  target->m_bottomside_vertices.size(); i++)
+			{
+				if(target->m_bottomside_vertices[i].y < offset - p_centerY)	
+					sideT.push_back(target->m_bottomside_vertices[i]);
+			}break;
+		}*/
 
 	return std::make_pair(sideP, sideT);
 }
@@ -254,8 +340,15 @@ void Patch::translatePatchToOrigin(Ogre::SceneManager* mSceneMgr, int patchId)
 
 void Patch::translatePatch(int centerX, int centerY, int z_position, Ogre::SceneManager* mSceneMgr,  Ogre::Root* mRoot)
 {
-
 	isTarget = false;													//Targets never are moved. If the patch is moving, is not a target
+	mSceneMgr->getSceneNode(nodeName)->setPosition(centerX, centerY, z_position);
+	updateVertices(centerX, centerY, mSceneMgr);
+	mRoot->renderOneFrame();
+	//Sleep(70);
+}
+
+void Patch::updateVertices(int centerX, int centerY, Ogre::SceneManager* mSceneMgr)
+{
 	Ogre::Vector3 originVertex;
 	Ogre::Vector3 pos; 
 	Ogre::Vector3 scale; 
@@ -266,17 +359,15 @@ void Patch::translatePatch(int centerX, int centerY, int z_position, Ogre::Scene
 	std::vector<int> indice;
 	m_vertices.clear();
 
-	mSceneMgr->getSceneNode(nodeName)->setPosition(centerX, centerY, z_position);
 	pos  = mSceneMgr->getSceneNode(nodeName)->getPosition();
 	scale =  mSceneMgr->getSceneNode(nodeName)->getScale();
 	orientation =  mSceneMgr->getSceneNode(nodeName)->getOrientation();
 	std::tie(m_vertices, m_indices) = getMeshInformation(&mSceneMgr->getEntity(entName)->getMesh(),vertex_count,index_count,indices, pos, orientation, scale);
 	deleteRepeatedVertices();
-	
+
 	getSideVertices(m_vertices, centerX, centerY);
-	mRoot->renderOneFrame();
 	m_orientation = orientation;
-	//Sleep(70);
+
 }
 
 void Patch::translatePatchDeffinitve(Ogre::SceneManager* mSceneMgr, bestErrorOfPatch bestFitOverall, int centerX, int centerY)
@@ -307,22 +398,10 @@ void Patch::rotatePatch(Ogre::SceneManager* mSceneMgr, int centerX, int centerY)
 {
 	Ogre::Quaternion rotation(Ogre::Degree(-90), Ogre::Vector3::UNIT_Z); 
 	Ogre::Matrix3 rotationM;
-	rotation.ToRotationMatrix(rotationM);
-	Ogre::Vector3 pos; 
-	Ogre::Vector3 scale; 
-	Ogre::Quaternion orientation; 
-	size_t vertex_count,index_count;
-	unsigned* indices;
-
+	rotation.ToRotationMatrix(rotationM);	
 	mSceneMgr->getSceneNode(nodeName)->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL);
-	pos = mSceneMgr->getSceneNode(nodeName)->getPosition();
-	scale =  mSceneMgr->getSceneNode(nodeName)->getScale();
-	orientation =  mSceneMgr->getSceneNode(nodeName)->getOrientation();
-	std::tie(m_vertices, m_indices) = getMeshInformation(&mSceneMgr->getEntity(entName)->getMesh(),vertex_count,index_count,indices, pos, orientation, scale);
-	deleteRepeatedVertices();
+	updateVertices(centerX, centerY, mSceneMgr);
 
-	getSideVertices(m_vertices, centerX, centerY);
-	m_orientation = orientation;
 }
 
 void Patch::becomesTarget()

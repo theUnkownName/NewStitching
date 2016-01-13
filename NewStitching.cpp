@@ -208,21 +208,15 @@ void NewStitching::chooseSceneManager()
 void NewStitching::createCamera()
 {
   mCameraFront = mSceneMgr->createCamera("FrontCam");
-  mCameraFront->setPosition(Ogre::Vector3(0, 0, 230));
-  mCameraFront->lookAt(Ogre::Vector3(0, 0, 0));
+  mCameraFront->setPosition(Ogre::Vector3(30, 30, 160));
+  mCameraFront->lookAt(Ogre::Vector3(30, 30, 0));
   mCameraFront->setNearClipDistance(5);
 
   mCameraSideView = mSceneMgr->createCamera("SideView");
-  mCameraSideView->setPosition(Ogre::Vector3(-100, 50, 0 ));
-  mCameraSideView->lookAt(Ogre::Vector3(0,40,0));
+  mCameraSideView->setPosition(Ogre::Vector3(-70, 30, 0 ));
+  mCameraSideView->lookAt(Ogre::Vector3(30,30,0));
   mCameraSideView->setNearClipDistance(5);
 
-  mCameraBack= mSceneMgr->createCamera("BackView");
-  mCameraBack->setPosition(Ogre::Vector3(0, 40, -130 ));
-  mCameraBack->lookAt(Ogre::Vector3(0,40,0));
-  mCameraBack->setNearClipDistance(5);
-  
- 
   mCameraMan = new OgreBites::SdkCameraMan(mCameraFront);
 
 }
@@ -242,14 +236,6 @@ void NewStitching::createScene()
 	createPatches();
 	clickM = false;
 
-
-	m_pray_scene_query = mSceneMgr->createRayQuery(Ogre::Ray(), Ogre::SceneManager::WORLD_GEOMETRY_TYPE_MASK);
-    if (NULL == m_pray_scene_query)
-    {
-       Ogre::LogManager::getSingletonPtr()->logMessage("*** Failed to create Ogre::RaySceneQuery instance ***");
-    }
-    m_pray_scene_query->setSortByDistance(true);
-	
 }
 
 void NewStitching::createGrid(int height_grid, int width_grid)
@@ -289,13 +275,12 @@ void NewStitching::createTemplate()
 	Ogre::Quaternion rotation(Ogre::Degree(-180), Ogre::Vector3::UNIT_Y); 
 	Ogre::Quaternion rotation2(Ogre::Degree(180), Ogre::Vector3::UNIT_Z); 
 	Ogre::Vector3 scale(0.5, 0.5, 0.5);
-	//Ogre::Vector3 scale(1,1,1);
-	//Create the mesh (patch)
+
 	Ogre::Entity *targetPatch = mSceneMgr->createEntity("target", "mm.mesh");
 	Ogre::SceneNode* targetNode = mSceneMgr->getSceneNode("grid")->createChildSceneNode();
 	targetNode->scale(scale);
 	targetNode->translate(30,30,0);
-	targetNode->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL);
+	targetNode->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL); //Because Blender export them with a different orientation
 	targetNode->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
 	targetNode->attachObject(targetPatch);
 
@@ -304,8 +289,7 @@ void NewStitching::createTemplate()
 void NewStitching::createPatches()
 {	
 	Ogre::SceneNode* patches = mSceneMgr->getRootSceneNode()->createChildSceneNode("patches");
-	patches->translate(0,0,0, Ogre::Node::TS_WORLD);
-	
+
 	for (int numberOfPatch = 0; numberOfPatch < 8; numberOfPatch++) // Create 7 patches
 	{
 		Patch* patch = new Patch(false, numberOfPatch, mSceneMgr);
@@ -349,7 +333,6 @@ void NewStitching::startAnimation()
 		mRoot->renderOneFrame();
 		bestPatchInGrid.cell->updateCell(bestPatch);												//Update that cell with the new patch as target
 	}
-	Sleep(19000);
 	mouseFlag = true;
 }
 
@@ -436,34 +419,25 @@ void NewStitching::createViewports()
 		Ogre::Real(sideLeftVP->getActualWidth()) /
 		Ogre::Real(sideLeftVP->getActualHeight()));
 
-	Ogre::Viewport* backVP = mWindow->addViewport(mCameraBack,2,0.7,0.6,0.3,0.3); //Back Camera
-	backVP->setBackgroundColour(Ogre::ColourValue(0,0,0));
-	backVP->setOverlaysEnabled(false); 
-	mCameraBack->setAspectRatio(
-		Ogre::Real(backVP->getActualWidth()) /
-		Ogre::Real(backVP->getActualHeight()));
- 
-
-	//dualViewPort(mSceneMgr, mSecondarySceneMgr);
 }
 
-void NewStitching::dualViewPort(Ogre::SceneManager *primarySceneMgr, Ogre::SceneManager *secondarySceneMgr)
-{
-    mWindow->removeAllViewports();
- 
-    //Ogre::Viewport *vp = 0;
-   
-	Ogre::Viewport* vp = mWindow->addViewport(mCameraFront);
-	Ogre::Camera *cam = primarySceneMgr->getCamera("PlayerCam");
-    vp = mWindow->addViewport(cam);
-    vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
-    cam->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
- 
-    cam = secondarySceneMgr->getCamera("SideView");
-    vp = mWindow->addViewport(cam, 1, 0.8, 0, 1, 1);
-    vp->setBackgroundColour(Ogre::ColourValue(1,1,1));
-    cam->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-}
+//void NewStitching::dualViewPort(Ogre::SceneManager *primarySceneMgr, Ogre::SceneManager *secondarySceneMgr)
+//{
+//    mWindow->removeAllViewports();
+// 
+//    //Ogre::Viewport *vp = 0;
+//   
+//	Ogre::Viewport* vp = mWindow->addViewport(mCameraFront);
+//	Ogre::Camera *cam = primarySceneMgr->getCamera("PlayerCam");
+//    vp = mWindow->addViewport(cam);
+//    vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
+//    cam->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+// 
+//    cam = secondarySceneMgr->getCamera("SideView");
+//    vp = mWindow->addViewport(cam, 1, 0.8, 0, 1, 1);
+//    vp->setBackgroundColour(Ogre::ColourValue(1,1,1));
+//    cam->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+//}
 
  
 void NewStitching::setupResources()

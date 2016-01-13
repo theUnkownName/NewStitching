@@ -15,6 +15,7 @@ typedef enum PatchSide
 	BOTTOM = 3
 } PatchSide;
 
+
 class GridCell;
 class Grid;
 
@@ -55,7 +56,7 @@ public:
 	void translatePatchToOrigin(Ogre::SceneManager* mSceneMgr, int);
 	void translatePatchDeffinitve(Ogre::SceneManager* mSceneMgr, bestErrorOfPatch, int, int);
 	PatchSide getSideFromInt(int);
-	std::pair<std::vector<Ogre::Vector3>, std::vector<Ogre::Vector3>> Patch::choseSide(Patch*, int pSide, int tSide);						//picks patch and template side 
+	std::pair<std::vector<Ogre::Vector3>,std::vector<Ogre::Vector3>> Patch::choseSide(Patch* target, int pSide, int tSide);						//picks patch and template side 
 	void removeFromErrorList(GridCell* cell);
 	void deleteRepeatedVertices();
 
@@ -65,6 +66,22 @@ public:
 	std::vector<Ogre::Vector3> m_rightside_vertices;											
 	std::vector<Ogre::Vector3> m_bottomside_vertices;											
 	std::vector<Ogre::Vector3> m_topside_vertices;	
+
+	//////////// Quartes of vertices for every patch. 
+	//  First one has left & bottom
+	//	Seconde one left & top
+	//	Third one top & right
+	//	Fourht one bottom & right
+	//         ________
+	//         |_2_|_3_|
+	//         |_1_|_4_|
+	//    
+
+	std::vector<Ogre::Vector3> firstQuarterVertices;			
+	std::vector<Ogre::Vector3> secondQuarterVertices;											
+	std::vector<Ogre::Vector3> thirdQuarterVertices;											
+	std::vector<Ogre::Vector3> fourhtQuarterVertices;	
+
 	std::vector<int> m_leftSide_indices;
 	std::vector<int> m_rightSide_indices;
 	std::vector<int> m_bottomSide_indices;
@@ -75,6 +92,9 @@ public:
 	Ogre::Real p_width, p_height;
 	std::vector<bestErrorOfPatch> _bestFitOfPatch;
 	std::vector<bestErrorOfPatch> m_curError;
+	double getOffset(PatchSide);
+	void getSelectedVertices(std::vector<Ogre::Vector3> sideP, std::vector<Ogre::Vector3> sideT, PatchSide offsetOrient);
+	void updateVertices(int centerX, int centerY, Ogre::SceneManager* mSceneMgr);
 	
   PatchSide patch_side;
   Ogre::Quaternion m_orientation;
