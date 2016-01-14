@@ -7,14 +7,21 @@
 #include <OgreLogManager.h>
 #include <SdkTrays.h>
 
-typedef enum PatchSide 
+typedef enum Quarter
+{
+	FIRSTQ = 1,
+	SECONDQ = 2,
+	THIRDQ = 3,
+	FOURTHQ = 4
+} Quarter;
+
+typedef enum PatchSide
 {
 	RIGHT = 0,
 	TOP = 1,
 	LEFT = 2,
 	BOTTOM = 3
 } PatchSide;
-
 
 class GridCell;
 class Grid;
@@ -28,6 +35,25 @@ struct bestErrorOfPatch
 	std::vector<Ogre::Vector3> vertices;
 	int patchId;
 	Ogre::Quaternion orientation; 
+};
+
+	//////////// Quartes of vertices for every patch. 
+	//  First one has left & bottom
+	//	Seconde one left & top
+	//	Third one top & right
+	//	Fourht one bottom & right
+	//         ________
+	//         |_2_|_3_|
+	//         |_1_|_4_|
+	//    
+
+struct _vertex
+{
+	Quarter inQuarter;
+	std::vector<Ogre::Vector3> m_leftside_vertices;												
+	std::vector<Ogre::Vector3> m_rightside_vertices;											
+	std::vector<Ogre::Vector3> m_bottomside_vertices;											
+	std::vector<Ogre::Vector3> m_topside_vertices;	
 };
 
 class Patch 
@@ -67,20 +93,8 @@ public:
 	std::vector<Ogre::Vector3> m_bottomside_vertices;											
 	std::vector<Ogre::Vector3> m_topside_vertices;	
 
-	//////////// Quartes of vertices for every patch. 
-	//  First one has left & bottom
-	//	Seconde one left & top
-	//	Third one top & right
-	//	Fourht one bottom & right
-	//         ________
-	//         |_2_|_3_|
-	//         |_1_|_4_|
-	//    
 
-	std::vector<Ogre::Vector3> firstQuarterVertices;			
-	std::vector<Ogre::Vector3> secondQuarterVertices;											
-	std::vector<Ogre::Vector3> thirdQuarterVertices;											
-	std::vector<Ogre::Vector3> fourhtQuarterVertices;	
+
 
 	std::vector<int> m_leftSide_indices;
 	std::vector<int> m_rightSide_indices;
@@ -106,7 +120,7 @@ public:
   Ogre::SceneNode* node;
 
   bestErrorOfPatch bestFit;
+  _vertex _vertices;
 
-};
-
+}; 
 #endif

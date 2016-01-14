@@ -7,6 +7,8 @@ Patch::Patch(bool target, int numberOfPatch, Ogre::SceneManager* mSceneMgr)
 	Ogre::Vector3 scale(0.5, 0.5, 0.5);
 	Ogre::Quaternion rotation(Ogre::Degree(180), Ogre::Vector3::UNIT_Y); 
 	Ogre::Quaternion rotation2(Ogre::Degree(180), Ogre::Vector3::UNIT_Z); 
+	
+
 
 	available = true;
 	nodeName = "node" + Ogre::StringConverter::toString(numberOfPatch);
@@ -112,10 +114,12 @@ Patch::Patch(bool target, Ogre::Entity* targetPatch)						//Target
 void Patch::getSideVertices(std::vector<Ogre::Vector3> verticesTemplate, int centerX, int centerY)
 {
 	Ogre::Vector3 firstVertex;
-	m_rightside_vertices.clear();
-	m_topside_vertices.clear();
-	m_leftside_vertices.clear();
-	m_bottomside_vertices.clear();
+	_vertex tmp;
+	_vertices.m_rightside_vertices.clear();
+	_vertices.m_topside_vertices.clear();
+	_vertices.m_leftside_vertices.clear();
+	_vertices.m_bottomside_vertices.clear();
+
 
 	//Offset is the center poing plus an arbitrary value 
 	double offsetX1 = centerX + 9.5; //To the right from the center point
@@ -123,36 +127,62 @@ void Patch::getSideVertices(std::vector<Ogre::Vector3> verticesTemplate, int cen
 	double offsetY1 = centerY + 9.5;  //To the top
 	double offsetY2 = centerY - 9.5;  //To the bottom
 
-	//Apply offset here
+
 	for (std::size_t i = 0; i < verticesTemplate.size(); i++)
 	{
-		if (verticesTemplate[i].x > offsetX1)													//Bigger than originX, will be right side
-			m_rightside_vertices.push_back(verticesTemplate[i]);
-		else if(verticesTemplate[i].x < offsetX2)
-			m_leftside_vertices.push_back(verticesTemplate[i]);									//Smaller than OriginX, will be left side
-		if(verticesTemplate[i].y > offsetY1)												
-			m_topside_vertices.push_back(verticesTemplate[i]);									//Bigger than originY, will be top side
-		else if (verticesTemplate[i].y < offsetY2)	
-			m_bottomside_vertices.push_back(verticesTemplate[i]);								//Smaller than originY, will be bottom side
+		if (verticesTemplate[i].x > centerX)													//Bigger than centerX
+		{
+			_vertices.m_rightside_vertices.push_back(verticesTemplate[i]);
+			if(verticesTemplate[i].y > centerY)													//Bigger than centerY
+			{
+				_vertices.inQuarter = THIRDQ;
+				_vertices.m_topside_vertices.push_back(verticesTemplate[i]);
+			}
+			else if (verticesTemplate[i].y < centerY)											//Smallerr than centerY
+			{
+				_vertices.inQuarter = FOURTHQ;
+				_vertices.m_bottomside_vertices.push_back(verticesTemplate[i]);	
+			}
+		}
+		else 
+		{
+			_vertices.m_leftside_vertices.push_back(verticesTemplate[i]);
+			if(verticesTemplate[i].y > centerY)													//Bigger than centerY
+			{
+				_vertices.inQuarter = SECONDQ;
+				_vertices.m_topside_vertices.push_back(verticesTemplate[i]);
+			}
+			else if (verticesTemplate[i].y < centerY)											//Smallerr than centerY
+			{
+				_vertices.inQuarter = FIRSTQ;
+				_vertices.m_bottomside_vertices.push_back(verticesTemplate[i]);	
+			}
+		}
 	}
 
-	//for (std::size_t i = 0; i < verticesTemplate.size(); i++)
-	//{
-	//	if (verticesTemplate[i].x > centerX)													//Bigger than centerX
-	//	{
-	//		if(verticesTemplate[i].y > centerY)													//Bigger than centerY
-	//			thirdQuarterVertices.push_back(verticesTemplate[i]);
-	//		else if (verticesTemplate[i].y < centerY)											//Smallerr than centerY
-	//			fourhtQuarterVertices.push_back(verticesTemplate[i]);
-	//	}
-	//	else if (verticesTemplate[i].x < centerX)
-	//	{
-	//		if(verticesTemplate[i].y > centerY)													//Bigger than centerY
-	//			secondQuarterVertices.push_back(verticesTemplate[i]);
-	//		else if (verticesTemplate[i].y < centerY)											//Smallerr than centerY
-	//			firstQuarterVertices.push_back(verticesTemplate[i]);
-	//	}
-	//}
+	for (std::size_t i = 0; i < _vertices.m_rightside_vertices.size(); i++)
+	{
+		if (_vertices.m_rightside_vertices[i].x > offsetX1)
+			tmp.m_rightside_vertices.push_back(_vertices.m_rightside_vertices[i]);
+	}
+	for (std::size_t i = 0; i < _vertices.m_topside_vertices.size(); i++)
+	{
+		if (_vertices.m_topside_vertices[i].y > offsetY1)
+			tmp.m_topside_vertices.push_back(_vertices.m_topside_vertices[i]);
+	}
+	for (std::size_t i = 0; i < _vertices.m_bottomside_vertices.size(); i++)
+	{
+		if (_vertices.m_bottomside_vertices[i].y < offsetY2)
+			tmp.m_bottomside_vertices.push_back(_vertices.m_bottomside_vertices[i]);
+	}
+	for (std::size_t i = 0; i < _vertices.m_leftside_vertices.size(); i++)
+	{
+		if (_vertices.m_leftside_vertices[i].x < offsetX2)
+			tmp.m_leftside_vertices.push_back(_vertices.m_leftside_vertices[i]);
+	}
+
+	_vertices = tmp;
+
 
 }
 
@@ -232,75 +262,49 @@ std::pair<std::vector<Ogre::Vector3>,std::vector<Ogre::Vector3>> Patch::choseSid
 {
 	std::vector<Ogre::Vector3> sideP;
 	std::vector<Ogre::Vector3> sideT;
+	_vertex tmpS;
+	_vertex tmpT;
 	double offset = p_centerX + p_centerX/2; //30
 	
+	//TODO
+	//Refract for new struct _vertices u_u
 
-	switch (pSide)	{	
-	case(0):sideP = m_rightside_vertices;	break;
-	case(1):sideP = m_topside_vertices;		break;
-	case(2):sideP = m_leftside_vertices;	break;
-	case(3):sideP = m_bottomside_vertices;	break;
+	/*switch (pSide)	{	
+	case(0):sideP = _vertices.m_rightside_vertices; break;
+	case(1):sideP = _vertices.m_topside_vertices;		break;
+	case(2):sideP = _vertices.m_leftside_vertices;	break;
+	case(3):sideP = _vertices.m_bottomside_vertices;	break;
 	}
 
 	switch (tSide)	{
-	case(0):sideT = target->m_rightside_vertices;	break;
-	case(1):sideT = target->m_topside_vertices;		break;
-	case(2):sideT = target->m_leftside_vertices;	break;
-	case(3):sideT = target->m_bottomside_vertices;	break;
+	case(0):sideT = target->_vertices.m_rightside_vertices;	break;
+	case(1):sideT = target->_vertices.m_topside_vertices;		break;
+	case(2):sideT = target->_vertices.m_leftside_vertices;	break;
+	case(3):sideT = target->_vertices.m_bottomside_vertices;	break;
+	}
+*/
+	switch (pSide)	{	
+	case(0):tmpS.m_rightside_vertices = _vertices.m_rightside_vertices; 
+			tmpS.inQuarter = _vertices.inQuarter;	break;
+	case(1):tmpS.m_topside_vertices = _vertices.m_topside_vertices; 
+			tmpS.inQuarter = _vertices.inQuarter;		break;
+	case(2):tmpS.m_leftside_vertices = _vertices.m_leftside_vertices; 
+			tmpS.inQuarter = _vertices.inQuarter;;	break;
+	case(3):tmpS.m_bottomside_vertices = _vertices.m_bottomside_vertices; 
+			tmpS.inQuarter = _vertices.inQuarter;	break;
 	}
 
+	switch (tSide)	{
+	case(0):tmpT.m_rightside_vertices = target->_vertices.m_rightside_vertices;
+			tmpT.inQuarter = target->_vertices.inQuarter; break;
+	case(1):tmpT.m_topside_vertices = target->_vertices.m_topside_vertices;
+			tmpT.inQuarter = target->_vertices.inQuarter;		break;
+	case(2):tmpT.m_leftside_vertices = target->_vertices.m_leftside_vertices;
+			tmpT.inQuarter = target->_vertices.inQuarter;	break;
+	case(3):tmpT.m_bottomside_vertices = target->_vertices.m_bottomside_vertices;
+			tmpT.inQuarter = target->_vertices.inQuarter;	break;
+	}
 
-	/*switch (pSide)	{	
-		case(RIGHT):
-			for (int i = 0; i <  m_rightside_vertices.size(); i++)
-			{
-				if(m_rightside_vertices[i].x > offset)	
-					sideP.push_back(m_rightside_vertices[i]);
-			}break;
-		case(TOP):for (int i = 0; i <  m_topside_vertices.size(); i++)
-			{
-				if(m_topside_vertices[i].y > offset)	
-					sideP.push_back(m_topside_vertices[i]);
-			}break;
-		case(LEFT):
-			for (int i = 0; i <  m_leftside_vertices.size(); i++)
-			{
-				if(m_leftside_vertices[i].x < offset )	
-					sideP.push_back(m_leftside_vertices[i]);
-			}break;
-		case(BOTTOM):
-			for (int i = 0; i <  m_bottomside_vertices.size(); i++)
-			{
-				if(m_bottomside_vertices[i].y < offset)	
-					sideP.push_back(m_bottomside_vertices[i]);
-			}break;
-		}
-
-	switch (tSide)	{	
-		case(RIGHT):
-			for (int i = 0; i <  target->m_rightside_vertices.size(); i++)
-			{
-				if(target->m_rightside_vertices[i].x < offset + p_centerX)	
-					sideT.push_back(target->m_rightside_vertices[i]);
-			}break;
-		case(TOP):for (int i = 0; i <  target->m_topside_vertices.size(); i++)
-			{
-				if(target->m_topside_vertices[i].y < offset + p_centerY)	
-					sideT.push_back(target->m_topside_vertices[i]);
-			}break;
-		case(LEFT):
-			for (int i = 0; i <  target->m_leftside_vertices.size(); i++)
-			{
-				if(target->m_leftside_vertices[i].x < offset - p_centerX)	
-					sideT.push_back(target->m_leftside_vertices[i]);
-			}break;
-		case(BOTTOM):
-			for (int i = 0; i <  target->m_bottomside_vertices.size(); i++)
-			{
-				if(target->m_bottomside_vertices[i].y < offset - p_centerY)	
-					sideT.push_back(target->m_bottomside_vertices[i]);
-			}break;
-		}*/
 
 	return std::make_pair(sideP, sideT);
 }
