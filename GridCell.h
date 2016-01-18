@@ -26,7 +26,7 @@ class GridCell
 {
 public:
 
-
+	int m_cellX, m_cellY;
 	GridCell(void);
 	GridCell(int, int);
 	~GridCell(void) {};
@@ -47,7 +47,7 @@ public:
 
 private:
 	int c_height, c_width;									//width and height of each cell
-	int m_cellX, m_cellY;
+	
 	int c_size;												//Size of the cell
 	
 	

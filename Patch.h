@@ -49,7 +49,7 @@ public:
 									  const Ogre::Quaternion &orient,
 									  const Ogre::Vector3 &scale);
 	void getSideVertices(std::vector<Ogre::Vector3>, int, int); //sortVertices
-	void computeError(Patch* target, int s1, int s2, OgreBites::ParamsPanel* mDetailsPanel, PatchSide, Patch* patch, GridCell* cell, int);									//s from p
+	void computeError(Patch* target, int s1, int s2, OgreBites::ParamsPanel* mDetailsPanel, Patch* patch, GridCell* cell, int, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot );									//s from p
 	void becomesTarget();																		//Change when the patch becomes a target
 	void rotatePatch(Ogre::SceneManager* mSceneMgr, int, int);
 	void translatePatch(int, int, int, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot);
@@ -96,6 +96,9 @@ public:
 	void getSelectedVertices(std::vector<Ogre::Vector3> sideP, std::vector<Ogre::Vector3> sideT, PatchSide offsetOrient);
 	void updateVertices(int centerX, int centerY, Ogre::SceneManager* mSceneMgr);
 	
+
+	void DestroyAllAttachedMovableObjects( Ogre::SceneNode* i_pSceneNode );
+
   PatchSide patch_side;
   Ogre::Quaternion m_orientation;
 

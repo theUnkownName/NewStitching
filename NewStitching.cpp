@@ -213,7 +213,7 @@ void NewStitching::createCamera()
   mCameraFront->setNearClipDistance(5);
 
   mCameraSideView = mSceneMgr->createCamera("SideView");
-  mCameraSideView->setPosition(Ogre::Vector3(-70, 30, 0 ));
+  mCameraSideView->setPosition(Ogre::Vector3(-50, 30, 0 ));
   mCameraSideView->lookAt(Ogre::Vector3(30,30,0));
   mCameraSideView->setNearClipDistance(5);
 
@@ -320,7 +320,7 @@ void NewStitching::startAnimation()
 	Patch* bestPatch;
 	bestErrorOfPatch bestPatchInGrid;
 
-	for (int patchesInPlace = numberOfPossibleCells; patchesInPlace > 0 ; patchesInPlace--)			//are all patches in place?
+	for (int cells_checked = 0; cells_checked < numberOfPossibleCells; cells_checked++)
 	{
 		for (int patchId = 0; patchId < _patches.size(); patchId++)									//Are all patches checked?
 		{
@@ -331,9 +331,10 @@ void NewStitching::startAnimation()
 		bestPatch = _patches[bestPatchInGrid.patchId];												//I cant put the patch directly in the struct (dont know why) so i look for the identifier of the patch
 		bestPatch->translatePatchDeffinitve(mSceneMgr, bestPatchInGrid,bestPatchInGrid.cell->c_centerX, bestPatchInGrid.cell->c_centerY);	//Translate the patch to the best position
 		mRoot->renderOneFrame();
-		bestPatchInGrid.cell->updateCell(bestPatch);												//Update that cell with the new patch as target
+		bestPatchInGrid.cell->updateCell(bestPatch);
 	}
 	mouseFlag = true;
+
 }
 
 std::pair<int, int> NewStitching::retrieveXY(int x, int y)
@@ -405,14 +406,15 @@ void NewStitching::createFrameListener(void)
 
 void NewStitching::createViewports()
 {
+	//Ogre::Viewport* vp = mWindow->addViewport(mCameraFront,1,0.5,0,0.5,0.5);
 	Ogre::Viewport* vp = mWindow->addViewport(mCameraFront);
 	vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0));
-    mCameraFront->setAspectRatio(
+	    mCameraFront->setAspectRatio(
 		Ogre::Real(vp->getActualWidth()) /
 		Ogre::Real(vp->getActualHeight()));
 
 
-	Ogre::Viewport* sideLeftVP = mWindow->addViewport(mCameraSideView,1,0,0.6,0.3,0.3); //Side Camera
+	Ogre::Viewport* sideLeftVP = mWindow->addViewport(mCameraSideView,2,0.1,0.2,0.1,0.8); //Side Camera
 	sideLeftVP->setBackgroundColour(Ogre::ColourValue(0,0,0));
 	sideLeftVP->setOverlaysEnabled(false); 
 	mCameraSideView->setAspectRatio(

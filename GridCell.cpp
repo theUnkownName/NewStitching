@@ -61,8 +61,6 @@ bool GridCell::isFree()
 	 p->available = false;
 	 p->becomesTarget();
  }
- 
-
 
  void GridCell::updateSideVertices(Patch* p)								//Should i keep this?
  {
@@ -168,10 +166,10 @@ void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, Ogr
 			
 			if (rotationNumber == 0){																					//If there is no rotation yet, calculate error in first position
 				side = patch->patch_side;
-				patch->computeError(target, pSide[neighbor], tSide[neighbor], mDetailsPanel, patch->patch_side, patch, m_grid[i_grid][j_grid], patchId);	  //patchSide and targetSide for each neighbor
+				patch->computeError(target, pSide[neighbor], tSide[neighbor], mDetailsPanel, patch, m_grid[i_grid][j_grid], patchId, mSceneMgr,mRoot );	  //patchSide and targetSide for each neighbor
 			}else
 			{																									//Start rotation	
-				if(neighbor == 0)																						//Rotate the patch only once for all the neighbours
+				if(neighbor == 0)																				//Rotate the patch only once for all the neighbours, if this value is bigger than 0, it was already rotated for the previous neighbour and the patch is on the right position now
 				{	
 					patch->rotatePatch(mSceneMgr, centerX, centerY);								//Rotate patch (Create new vertices after 90 degres rotation)
 					mRoot->renderOneFrame();
@@ -180,16 +178,15 @@ void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, Ogr
 				if(side > 3){																			//If the side is BOTTOM (3) go to the RIGHT side that is zero
 					side = RIGHT;}
 				patch->patch_side = patch->getSideFromInt(side);
-				patch->computeError(target, pSide[neighbor], tSide[neighbor], mDetailsPanel, patch->patch_side, patch, m_grid[i_grid][j_grid], patchId);			
+				patch->computeError(target, pSide[neighbor], tSide[neighbor], mDetailsPanel,  patch, m_grid[i_grid][j_grid], patchId, mSceneMgr, mRoot);			
 			}
 		}
 	}		
-	//patch->rotatePatch(mSceneMgr, centerX, centerY);												//Return to original position
+	patch->rotatePatch(mSceneMgr, centerX, centerY);												//Return to original position
 }
 
 void Grid::transverseGrid(Patch* patch, Patch* target, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot, OgreBites::ParamsPanel* mDetailsPanel, int patchId, int numberOfCells)
 {
-	GridCell* cell;
 	int centerX; //Center of the patch in X
 	int centerY; //Center of the patch in y
 	bestErrorOfPatch bestFitOverall;
@@ -235,7 +232,7 @@ bestErrorOfPatch Grid::bestFitOfPatch(Patch* p)
 	
 	for (std::size_t i = 0; i < p->m_curError.size(); i++){
 		double minTmp = p->m_curError[i].error;
-		if ( minTmp < error && p->m_curError[i].cell->m_gridproperty != OCCUPIED)									//If new error is lower than the last
+		if ( minTmp < error && p->m_curError[i].cell->m_gridproperty != OCCUPIED && p->available == TRUE)									//If new error is lower than the last
 		{
 			error = minTmp;
 			side = p->m_curError[i].side;
@@ -263,7 +260,9 @@ bestErrorOfPatch Grid::bestFitInGrid(std::vector<bestErrorOfPatch> bfit)
 	GridCell* c;
 	int patchId;
 	Ogre::Quaternion orientation;
-	
+	int x;
+	int y; 
+
 	int i = 0;
 	while (bfit[i].cell->m_gridproperty == OCCUPIED){i++;}
 
@@ -273,10 +272,13 @@ bestErrorOfPatch Grid::bestFitInGrid(std::vector<bestErrorOfPatch> bfit)
 	bestError_vertices = bfit[i].vertices;
 	patchId = bfit[i].patchId;
 	orientation = bfit[i].orientation;
+	//isAvailable = bfit[i].cell->m_patch->available;
 	
 	for (std::size_t i = 0; i < bfit.size(); i++){
 		double minTmp = bfit[i].error;
-		if ( minTmp < error && bfit[i].cell->m_gridproperty != OCCUPIED)									//If new error is lower than the last
+		x = bfit[i].cell->m_cellX;
+		y = bfit[i].cell->m_cellY;
+		if ( minTmp < error && m_grid[x][y]->m_gridproperty != OCCUPIED && bfit[i].cell->m_patch->available == true) //If new error is lower than the last
 		{
 			c = bfit[i].cell;
 			side = bfit[i].side;
@@ -332,9 +334,9 @@ int Grid::getPositionInZ(std::size_t  translationNumber)
 	int z_position;
 
 	if (translationNumber == 1)																	//modify the "z" position 
-		z_position = -1;
+		z_position = -2;
 	else if (translationNumber == 2)
-		z_position = 1;
+		z_position = 2;
 	else z_position = 0;
 
 	return z_position;
