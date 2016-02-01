@@ -15,14 +15,11 @@ typedef enum PatchSide
 	BOTTOM = 3
 } PatchSide;
 
-
 class GridCell;
 class Grid;
 
 struct bestErrorOfPatch
 {
-//	Patch *p;
-	PatchSide side;
 	double error;
 	GridCell* cell;
 	std::vector<Ogre::Vector3> vertices;
@@ -30,17 +27,26 @@ struct bestErrorOfPatch
 	Ogre::Quaternion orientation; 
 };
 
+//struct targetsChecked
+//{
+//	Patch _target;
+//	PatchSide _side;
+//
+//};
 class Patch 
 {
+
 public:
 	//Constructors
 	Patch(bool target, int numberOfPatch, Ogre::SceneManager*);
 	Patch(bool, Ogre::Entity*); //isTarget, vertices of the patch
+
 	
 	//Destructor
 	~Patch(void);
 
 	//Others
+	bool isTargetUnchecked(Patch* patch, std::vector<std::tuple<PatchSide, PatchSide, Patch*>> m_neighbours);
 	std::pair<std::vector<Ogre::Vector3>, std::vector<int>> getMeshInformation(const Ogre::MeshPtr* meshPtr,
 									  size_t &vertex_count,
 									  size_t &index_count, 
@@ -49,16 +55,20 @@ public:
 									  const Ogre::Quaternion &orient,
 									  const Ogre::Vector3 &scale);
 	void getSideVertices(std::vector<Ogre::Vector3>, int, int); //sortVertices
-	void computeError(Patch* target, int s1, int s2, OgreBites::ParamsPanel* mDetailsPanel, Patch* patch, GridCell* cell, int, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot );									//s from p
+	void computeError(Patch* target, PatchSide _patch, PatchSide _target, OgreBites::ParamsPanel* mDetailsPanel, Patch* patch, GridCell* cell, int, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot );									//s from p
 	void becomesTarget();																		//Change when the patch becomes a target
 	void rotatePatch(Ogre::SceneManager* mSceneMgr, int, int);
 	void translatePatch(int, int, int, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot);
 	void translatePatchToOrigin(Ogre::SceneManager* mSceneMgr, int);
 	void translatePatchDeffinitve(Ogre::SceneManager* mSceneMgr, bestErrorOfPatch, int, int);
 	PatchSide getSideFromInt(int);
-	std::pair<std::vector<Ogre::Vector3>,std::vector<Ogre::Vector3>> Patch::choseSide(Patch* target, int pSide, int tSide);						//picks patch and template side 
+	std::pair<std::vector<Ogre::Vector3>,std::vector<Ogre::Vector3>> Patch::choseSide(Patch* target, PatchSide pSide, PatchSide tSide);						//picks patch and template side 
 	void removeFromErrorList(GridCell* cell);
 	void deleteRepeatedVertices();
+	double getOffset(PatchSide);
+	void getSelectedVertices(std::vector<Ogre::Vector3> sideP, std::vector<Ogre::Vector3> sideT, PatchSide offsetOrient);
+	void updateVertices(int centerX, int centerY, Ogre::SceneManager* mSceneMgr);
+	void DestroyAllAttachedMovableObjects( Ogre::SceneNode* i_pSceneNode );
 
 	std::vector<Ogre::Vector3> m_vertices;														//Four vertices per patch
 	std::vector<int> m_indices;
@@ -66,39 +76,19 @@ public:
 	std::vector<Ogre::Vector3> m_rightside_vertices;											
 	std::vector<Ogre::Vector3> m_bottomside_vertices;											
 	std::vector<Ogre::Vector3> m_topside_vertices;	
-
-	//////////// Quartes of vertices for every patch. 
-	//  First one has left & bottom
-	//	Seconde one left & top
-	//	Third one top & right
-	//	Fourht one bottom & right
-	//         ________
-	//         |_2_|_3_|
-	//         |_1_|_4_|
-	//    
-
-	std::vector<Ogre::Vector3> firstQuarterVertices;			
-	std::vector<Ogre::Vector3> secondQuarterVertices;											
-	std::vector<Ogre::Vector3> thirdQuarterVertices;											
-	std::vector<Ogre::Vector3> fourhtQuarterVertices;	
-
-	std::vector<int> m_leftSide_indices;
-	std::vector<int> m_rightSide_indices;
-	std::vector<int> m_bottomSide_indices;
-	std::vector<int> m_topSide_indices;
+	std::vector<std::pair<Patch*, PatchSide>> targetsChecked;
+	//std::vector<targetsChecked> _targetsChecked;
+	//std::vector<Patch*> targetsChecked;
 	bool isTarget;
 	bool available;
 	Ogre::Real p_centerX, p_centerY;
 	Ogre::Real p_width, p_height;
 	std::vector<bestErrorOfPatch> _bestFitOfPatch;
 	std::vector<bestErrorOfPatch> m_curError;
-	double getOffset(PatchSide);
-	void getSelectedVertices(std::vector<Ogre::Vector3> sideP, std::vector<Ogre::Vector3> sideT, PatchSide offsetOrient);
-	void updateVertices(int centerX, int centerY, Ogre::SceneManager* mSceneMgr);
+	bestErrorOfPatch bestFit;
+	std::vector<GridCell*> cellsWherePatchHasBeen;
+
 	
-
-	void DestroyAllAttachedMovableObjects( Ogre::SceneNode* i_pSceneNode );
-
   PatchSide patch_side;
   Ogre::Quaternion m_orientation;
 
@@ -107,9 +97,9 @@ public:
   Ogre::String mesh;
   Ogre::Entity* ent;
   Ogre::SceneNode* node;
-
-  bestErrorOfPatch bestFit;
-
 };
+
+
+
 
 #endif

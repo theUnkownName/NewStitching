@@ -15,12 +15,12 @@ typedef enum GridProperty
 	POSSIBLE
 }GridProperty;
 
-struct BestFit
-{
-	GridCell *cell;
-	std::vector<Ogre::Vector3> vertices;
-	double error;
-};
+//struct BestFit
+//{
+//	GridCell *cell;
+//	std::vector<Ogre::Vector3> vertices;
+//	double error;
+//};
 
 class GridCell
 {
@@ -44,10 +44,10 @@ public:
 	bool cellUnchecked;
 	int numberOfPatchesTried;							//How many patches have been tried in that cell
 	GridProperty m_gridproperty;
+						//Save a list of all patches that checked that cell
 
 private:
 	int c_height, c_width;									//width and height of each cell
-	
 	int c_size;												//Size of the cell
 	
 	
@@ -69,16 +69,19 @@ public:
 	bestErrorOfPatch bestFitInGrid(std::vector<bestErrorOfPatch> bfit);							//The best fit in all the grid
 	void Grid::updatePossibleCell(int, int, int, int, Patch* p);
 	void updateGrid(Patch* p);
-	void getNeighbours(int, int);
+	std::vector<std::tuple<PatchSide, PatchSide, Patch*>> getNeighbours(int, int);
 	void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, OgreBites::ParamsPanel* mDetailsPanel, Ogre::SceneManager* mSceneMgr, int patchId, Ogre::Root* mRoot, int, int);
 	int Grid::getPositionInZ(std::size_t translationNumber);
 	bestErrorOfPatch bestFitOfPatch(Patch* p);
+	bool isTargetUnchecked(Patch* patch, std::vector<std::tuple<PatchSide, PatchSide, Patch*>> m_neighbours, int, int);
 
 	std::pair<int, int> retrieveXY(int i, int j); //Retrieve the x and ycoordinates from the i and j identifier of the grid
 	std::vector<std::vector<GridCell*>> m_grid;
 	std::vector<std::tuple<PatchSide, PatchSide, Patch*>> m_neighbours;
 	std::vector<int> pSide;
 	std::vector<int> tSide;
+	/*std::vector<PatchSide> pSide;
+	std::vector<PatchSide> tSide;*/
 	std::vector<Patch*> targets;
 	std::vector<bestErrorOfPatch> _bestFitOfPatch;
 	std::vector<int> patchesUsed;	

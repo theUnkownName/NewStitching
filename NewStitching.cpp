@@ -188,7 +188,7 @@ bool NewStitching::configure()
     return false;
   }
  
-  mWindow = mRoot->initialise(true, "Triangles");
+  mWindow = mRoot->initialise(true, "Gassendi");
  
   return true;
 }
@@ -319,22 +319,24 @@ void NewStitching::startAnimation()
 	Patch* target = new Patch(true, mSceneMgr->getEntity("target"));							//Create the template
 	Patch* bestPatch;
 	bestErrorOfPatch bestPatchInGrid;
-
-	for (int cells_checked = 0; cells_checked < numberOfPossibleCells; cells_checked++)
+	if (mouseFlag == false)
 	{
-		for (int patchId = 0; patchId < _patches.size(); patchId++)									//Are all patches checked?
+		for (int cells_checked = 0; cells_checked < numberOfPossibleCells; cells_checked++)
 		{
-			if (_patches[patchId]->available == true)												//If this patch is not in place already
-				grid->transverseGrid(_patches[patchId], target, mSceneMgr, mRoot, mDetailsPanel, patchId, numberOfTotalCells-1);
-		}		
-		bestPatchInGrid = grid->bestFitInGrid(grid->_bestFitOfPatch);								//Retrieves the best patch for all the grid
-		bestPatch = _patches[bestPatchInGrid.patchId];												//I cant put the patch directly in the struct (dont know why) so i look for the identifier of the patch
-		bestPatch->translatePatchDeffinitve(mSceneMgr, bestPatchInGrid,bestPatchInGrid.cell->c_centerX, bestPatchInGrid.cell->c_centerY);	//Translate the patch to the best position
-		mRoot->renderOneFrame();
-		bestPatchInGrid.cell->updateCell(bestPatch);
+			for (std::size_t patchId = 0; patchId < _patches.size(); patchId++)									//Are all patches checked?
+			{
+				if (_patches[patchId]->available == true)												//If this patch is not in place already
+					grid->transverseGrid(_patches[patchId], target, mSceneMgr, mRoot, mDetailsPanel, patchId, numberOfTotalCells-1);
+			}		
+			bestPatchInGrid = grid->bestFitInGrid(grid->_bestFitOfPatch);								//Retrieves the best patch for all the grid
+			bestPatch = _patches[bestPatchInGrid.patchId];												//I cant put the patch directly in the struct (dont know why) so i look for the identifier of the patch
+			bestPatch->translatePatchDeffinitve(mSceneMgr, bestPatchInGrid,bestPatchInGrid.cell->c_centerX, bestPatchInGrid.cell->c_centerY);	//Translate the patch to the best position
+			mRoot->renderOneFrame();
+			bestPatchInGrid.cell->updateCell(bestPatch);
+			grid->_bestFitOfPatch.clear();
+		}
 	}
 	mouseFlag = true;
-
 }
 
 std::pair<int, int> NewStitching::retrieveXY(int x, int y)
@@ -394,11 +396,7 @@ void NewStitching::createFrameListener(void)
 
   // create a panel to dsiplay the error and angle
   Ogre::StringVector items;
-  items.push_back("Patch Side:  ");
-  items.push_back("Target Side: ");
   items.push_back("Error:       ");
-  items.push_back("Camera Position:       ");
-  items.push_back("Camera Orientation:       ");
   mDetailsPanel = mTrayMgr->createParamsPanel(OgreBites::TL_NONE, "DetailsPanel", 200, items);
   mRoot->addFrameListener(this);
    	
@@ -423,25 +421,6 @@ void NewStitching::createViewports()
 
 }
 
-//void NewStitching::dualViewPort(Ogre::SceneManager *primarySceneMgr, Ogre::SceneManager *secondarySceneMgr)
-//{
-//    mWindow->removeAllViewports();
-// 
-//    //Ogre::Viewport *vp = 0;
-//   
-//	Ogre::Viewport* vp = mWindow->addViewport(mCameraFront);
-//	Ogre::Camera *cam = primarySceneMgr->getCamera("PlayerCam");
-//    vp = mWindow->addViewport(cam);
-//    vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
-//    cam->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-// 
-//    cam = secondarySceneMgr->getCamera("SideView");
-//    vp = mWindow->addViewport(cam, 1, 0.8, 0, 1, 1);
-//    vp->setBackgroundColour(Ogre::ColourValue(1,1,1));
-//    cam->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-//}
-
- 
 void NewStitching::setupResources()
 {
   Ogre::ConfigFile cf;
