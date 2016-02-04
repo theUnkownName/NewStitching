@@ -217,7 +217,6 @@ void Grid::rotate4Times(Patch* target, Patch* patch, int i_grid, int j_grid, Ogr
 					error = error/m_neighbours.size();
 					bestErrorOfPatch current_error;
 					current_error.error = error;
-					current_error.error = error;
 					current_error.vertices = patch->m_vertices;
 					current_error.cell = m_grid[i_grid][j_grid];
 					current_error.patchId = patchId;
@@ -242,7 +241,7 @@ void Grid::transverseGrid(Patch* patch, Patch* target, Ogre::SceneManager* mScen
 	int centerX; //Center of the patch in X
 	int centerY; //Center of the patch in y
 	//bestErrorOfPatch bestFitOverall;
-	int z_position = 0;
+	double z_position = 0;
 	int patchCounter = patchId;
 
 	updateGrid(target);																//Set the target into the cell and mark it as occupied																
@@ -419,9 +418,9 @@ std::vector<std::tuple<PatchSide, PatchSide, Patch*>> Grid::getNeighbours(int i,
 	// }
 }
 
-int Grid::getPositionInZ(std::size_t  translationNumber)
+double Grid::getPositionInZ(std::size_t  translationNumber)
 {
-	int z_position;
+	double z_position;
 	if (translationNumber == 1)																	//modify the "z" position 
 		z_position = -1;
 	else if (translationNumber == 2)

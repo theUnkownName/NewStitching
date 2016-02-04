@@ -213,7 +213,7 @@ void NewStitching::createCamera()
   mCameraFront->setNearClipDistance(5);
 
   mCameraSideView = mSceneMgr->createCamera("SideView");
-  mCameraSideView->setPosition(Ogre::Vector3(-50, 30, 0 ));
+  mCameraSideView->setPosition(Ogre::Vector3(-80, 30, 0 ));
   mCameraSideView->lookAt(Ogre::Vector3(30,30,0));
   mCameraSideView->setNearClipDistance(5);
 
@@ -235,6 +235,7 @@ void NewStitching::createScene()
 	createTemplate();
 	createPatches();
 	clickM = false;
+	mouseFlag = false;
 
 }
 
@@ -300,10 +301,9 @@ void NewStitching::createPatches()
 bool NewStitching::processUnbufferedInput(const Ogre::FrameEvent& fe)
 {
 	static bool mouseDownLastFrame = false;
-	mouseFlag = false;
 	bool leftMouseDown = mMouse->getMouseState().buttonDown(OIS::MB_Left);
 
-	if (leftMouseDown && !mouseDownLastFrame && !mouseFlag)
+	if (leftMouseDown && !mouseDownLastFrame)
 	{
 		startAnimation();
 	}
@@ -319,7 +319,7 @@ void NewStitching::startAnimation()
 	Patch* target = new Patch(true, mSceneMgr->getEntity("target"));							//Create the template
 	Patch* bestPatch;
 	bestErrorOfPatch bestPatchInGrid;
-	if (mouseFlag == false)
+	if (!mouseFlag)
 	{
 		for (int cells_checked = 0; cells_checked < numberOfPossibleCells; cells_checked++)
 		{
@@ -335,8 +335,8 @@ void NewStitching::startAnimation()
 			bestPatchInGrid.cell->updateCell(bestPatch);
 			grid->_bestFitOfPatch.clear();
 		}
-	}
 	mouseFlag = true;
+	}	
 }
 
 std::pair<int, int> NewStitching::retrieveXY(int x, int y)
@@ -412,7 +412,7 @@ void NewStitching::createViewports()
 		Ogre::Real(vp->getActualHeight()));
 
 
-	Ogre::Viewport* sideLeftVP = mWindow->addViewport(mCameraSideView,2,0.1,0.2,0.1,0.8); //Side Camera
+	Ogre::Viewport* sideLeftVP = mWindow->addViewport(mCameraSideView,2,0.1,0.1,0.1,0.8); //Side Camera
 	sideLeftVP->setBackgroundColour(Ogre::ColourValue(0,0,0));
 	sideLeftVP->setOverlaysEnabled(false); 
 	mCameraSideView->setAspectRatio(

@@ -1,8 +1,9 @@
-﻿Build started 01.02.2016 13:05:31.
+﻿Build started 02.02.2016 11:02:34.
      1>Project "C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\NewStitching\NewStitching.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OIS" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\Samples\Common\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\boost" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE\Overlay" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt GridCell.cpp
-         GridCell.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OIS" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\Samples\Common\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\boost" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE\Overlay" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt NewStitching.cpp
+         NewStitching.cpp
+     1>NewStitching.cpp(415): warning C4305: 'argument' : truncation from 'double' to 'float'
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\Release\NewStitching.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\OgreSDK\OgreSDK_vc11_v1-9-0\lib\Release" /LIBPATH:"C:\OgreSDK\OgreSDK_vc11_v1-9-0\boost\lib" OgreMain.lib OIS.lib OgreOverlay.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\Release\NewStitching.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\Release\NewStitching.lib" /MACHINE:X86 /SAFESEH Release\GridCell.obj
          Release\NewStitching.obj
@@ -18,4 +19,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:45.01
+Time Elapsed 00:00:46.24

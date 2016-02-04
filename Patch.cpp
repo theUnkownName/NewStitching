@@ -108,7 +108,6 @@ void Patch::removeFromErrorList(GridCell* cell)
 void Patch::computeError(Patch* target, PatchSide _patchSide, PatchSide _targetSide, OgreBites::ParamsPanel* mDetailsPanel, Patch* patch, GridCell* cell, int patchId, Ogre::SceneManager* mSceneMgr, Ogre::Root* mRoot)
 {
 	double error = 0.0;
-//	Ogre::Real temperror;
 	std::vector<Ogre::Real> temperror;
 	std::vector<Ogre::Vector3> sideP;
 	std::vector<Ogre::Vector3> sideT;
@@ -123,32 +122,8 @@ void Patch::computeError(Patch* target, PatchSide _patchSide, PatchSide _targetS
 		{
 			Ogre::Real distance = sideP[vertexPatch].distance(sideT[vertexTemplate]);
 			temperror.push_back(Ogre::Math::Sqrt(distance * distance)); 
-		
-
-////// For the patch
-//				Ogre::Entity* ogreEntity = mSceneMgr->createEntity("ogrehead.mesh");
-//				Ogre::SceneNode* ogreNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-//				ogreNode->attachObject(ogreEntity);
-//				ogreNode->setPosition(sideP[vertexPatch].x, sideP[vertexPatch].y, sideP[vertexPatch].z);
-//				ogreNode->scale(0.05,0.05,0.05);
-//
-//				// For the target
-//				Ogre::Entity* ogreEntity2 = mSceneMgr->createEntity("robot.mesh");
-//				Ogre::SceneNode* ogreNode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-//				ogreNode2->attachObject(ogreEntity2);
-//				ogreNode2->setPosition(sideT[vertexTemplate].x, sideT[vertexTemplate].y, sideT[vertexTemplate].z);
-//				ogreNode2->scale(0.08,0.08,0.08);
-//
-//				mRoot->renderOneFrame();
-//				DestroyAllAttachedMovableObjects(ogreNode);
-//				ogreNode->removeAndDestroyAllChildren();
-//				mSceneMgr->destroySceneNode(ogreNode);
-//				DestroyAllAttachedMovableObjects(ogreNode2);
-//				ogreNode2->removeAndDestroyAllChildren();
-//				mSceneMgr->destroySceneNode(ogreNode2);
 		}
 	}
-
 	for (std::size_t i = 0; i < temperror.size(); i++)
 	{
 		if ( std::abs((double)temperror[i]) <= 3	)
@@ -157,8 +132,7 @@ void Patch::computeError(Patch* target, PatchSide _patchSide, PatchSide _targetS
 			counter++;
 		}
 	}
-	//if (counter != 0)
-	//{
+
 	error = error/counter; //RMSE
 	bestErrorOfPatch current_error;
 	current_error.error = error;
@@ -167,10 +141,8 @@ void Patch::computeError(Patch* target, PatchSide _patchSide, PatchSide _targetS
 	current_error.patchId = patchId;
 	current_error.orientation = m_orientation;
 	m_curError.push_back(current_error);
-	//targetsChecked.push_back(std::make_pair(target, _targetSide));						//Save this side of this target as already checked for the patch (to dont check it again)
 
 	mDetailsPanel->setParamValue(0, Ogre::StringConverter::toString(error).c_str());	
-	//}
 }
 
 PatchSide Patch::getSideFromInt(int s)
@@ -310,7 +282,6 @@ void Patch::translatePatch(int centerX, int centerY, int z_position, Ogre::Scene
 	mSceneMgr->getSceneNode(nodeName)->setPosition(centerX, centerY, z_position);
 	mRoot->renderOneFrame();
 	updateVertices(centerX, centerY, mSceneMgr);
-	//Sleep(70);
 }
 
 void Patch::updateVertices(int centerX, int centerY, Ogre::SceneManager* mSceneMgr)
@@ -338,31 +309,10 @@ void Patch::updateVertices(int centerX, int centerY, Ogre::SceneManager* mSceneM
 void Patch::translatePatchDeffinitve(Ogre::SceneManager* mSceneMgr, bestErrorOfPatch bestFitOverall, int centerX, int centerY)
 {
 	isTarget = true;
+	
 	mSceneMgr->getSceneNode(nodeName)->setPosition(centerX, centerY, 0);
 	mSceneMgr->getSceneNode(nodeName)->setOrientation(bestFitOverall.orientation);
 	updateVertices(centerX, centerY, mSceneMgr);
-
-
-	//Ogre::Vector3 pos; 
-	//Ogre::Vector3 scale; 
-	//Ogre::Quaternion orientation; 
-	//size_t vertex_count,index_count;
-	//unsigned* indices;
-	//std::vector<Ogre::Vector3> vertices;														//Four vertices per patch
-	//std::vector<int> indice;
-	//m_vertices.clear();
-
-	//Ogre::Quaternion rotation(Ogre::Degree(-90), Ogre::Vector3::UNIT_Z); 
-	//Ogre::Matrix3 rotationM;
-	//rotation.ToRotationMatrix(rotationM);
-
-	//mSceneMgr->getSceneNode(nodeName)->setPosition(centerX, centerY, 0);
-	//mSceneMgr->getSceneNode(nodeName)->setOrientation(bestFitOverall.orientation);
-	//pos  = mSceneMgr->getSceneNode(nodeName)->getPosition();
-	//scale =  mSceneMgr->getSceneNode(nodeName)->getScale();
-	//orientation =  mSceneMgr->getSceneNode(nodeName)->getOrientation();
-	//std::tie(m_vertices, m_indices) = getMeshInformation(&mSceneMgr->getEntity(entName)->getMesh(),vertex_count,index_count,indices, pos, orientation, scale);
-	//getSideVertices(m_vertices, centerX, centerY);
 }
 
 void Patch::rotatePatch(Ogre::SceneManager* mSceneMgr, int centerX, int centerY)
