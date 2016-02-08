@@ -18,7 +18,7 @@ Patch::Patch(bool target, int numberOfPatch, Ogre::SceneManager* mSceneMgr)
 	translatePatchToOrigin(mSceneMgr, numberOfPatch);
 
 	node->attachObject(ent);
-	node->scale(scale);
+//	node->scale(scale);
 	node->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL);
 	node->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
 	Ogre::AxisAlignedBox bb = ent->getBoundingBox();
@@ -126,7 +126,7 @@ void Patch::computeError(Patch* target, PatchSide _patchSide, PatchSide _targetS
 	}
 	for (std::size_t i = 0; i < temperror.size(); i++)
 	{
-		if ( std::abs((double)temperror[i]) <= 3	)
+		if ( std::abs((double)temperror[i]) <= (20/6))
 		{
 			error += temperror[i];	
 			counter++;

@@ -1,4 +1,4 @@
-#include "GridCell.h"
+ï»¿#include "GridCell.h"
 
  ////////////////////////////
  ////////////////////////////
@@ -121,7 +121,7 @@ bool Grid::isTargetUnchecked(Patch* patch, std::vector<std::tuple<PatchSide, Pat
 {
 	bool flag = false;
 	bool cellChecked = false;
-	//If this side of the target hasn´t been checked for that patch
+	//If this side of the target hasnï¿½t been checked for that patch
 	if( patch->targetsChecked.size() == 0)
 		return true;
 	

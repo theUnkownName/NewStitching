@@ -243,28 +243,24 @@ void NewStitching::createGrid(int height_grid, int width_grid)
 {
 	Ogre::ManualObject* line = mSceneMgr->createManualObject("line");
 	line->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
+	int cellSize = widthCell;
+	int currentCellPos = 0;
 
-	//int numberOfCells = height * width;
-	//Vertical lines
-	line->position(0, 0, 0);
-	line->position(0, 60, 0);
-	line->position(20, 0, 0);
-	line->position(20, 60, 0);
-	line->position(40, 0, 0);
-	line->position(40, 60, 0);
-	line->position(60, 0, 0);
-	line->position(60, 60, 0);
-	
-	//Horizontal lines
-	line->position(0, 0, 0);
-	line->position(60, 0, 0);
-	line->position(0, 20, 0);
-	line->position(60, 20, 0);
-	line->position(0, 40, 0);
-	line->position(60, 40, 0);
-	line->position(0, 60, 0);
-	line->position(60, 60, 0);
-	
+	for (int verticalLines = 0; verticalLines < widhtGrid+1; verticalLines++) //I always need N patches + 1 to draw all grid (if there are 3 patches, I need 4 lines for the grid)
+	{
+		line->position(currentCellPos, 0, 0);
+		line->position(currentCellPos, widhtGrid * cellSize, 0);
+		currentCellPos += cellSize;
+	}
+
+	currentCellPos = 0;
+	for (int horizontalLines = 0; horizontalLines < heightGrid+1; horizontalLines++)
+	{
+		line->position(0, currentCellPos, 0);
+		line->position(heightGrid * cellSize, currentCellPos, 0);
+		currentCellPos += cellSize;
+	}
+
 	line->end();
 	Ogre::SceneNode* grid = mSceneMgr->getRootSceneNode()->createChildSceneNode("grid");
 	grid->attachObject(line);
@@ -279,7 +275,7 @@ void NewStitching::createTemplate()
 
 	Ogre::Entity *targetPatch = mSceneMgr->createEntity("target", "mm.mesh");
 	Ogre::SceneNode* targetNode = mSceneMgr->getSceneNode("grid")->createChildSceneNode();
-	targetNode->scale(scale);
+	//targetNode->scale(scale);
 	targetNode->translate(30,30,0);
 	targetNode->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL); //Because Blender export them with a different orientation
 	targetNode->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
