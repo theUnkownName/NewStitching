@@ -18,7 +18,7 @@ Patch::Patch(bool target, int numberOfPatch, Ogre::SceneManager* mSceneMgr)
 	translatePatchToOrigin(mSceneMgr, numberOfPatch);
 
 	node->attachObject(ent);
-//	node->scale(scale);
+	node->scale(scale);
 	node->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL);
 	node->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
 	Ogre::AxisAlignedBox bb = ent->getBoundingBox();

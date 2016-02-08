@@ -275,7 +275,7 @@ void NewStitching::createTemplate()
 
 	Ogre::Entity *targetPatch = mSceneMgr->createEntity("target", "mm.mesh");
 	Ogre::SceneNode* targetNode = mSceneMgr->getSceneNode("grid")->createChildSceneNode();
-	//targetNode->scale(scale);
+	targetNode->scale(scale);
 	targetNode->translate(30,30,0);
 	targetNode->rotate(rotation, Ogre::Node::TransformSpace::TS_LOCAL); //Because Blender export them with a different orientation
 	targetNode->rotate(rotation2, Ogre::Node::TransformSpace::TS_LOCAL);
