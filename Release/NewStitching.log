@@ -1,7 +1,8 @@
-﻿Build started 08.02.2016 12:50:18.
-     1>Project "C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\NewStitching\NewStitching.vcxproj" on node 2 (Build target(s)).
+﻿Build started 12.02.2016 14:06:55.
+     1>Project "C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\NewStitching\NewStitching.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OIS" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\Samples\Common\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\boost" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE\Overlay" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt NewStitching.cpp Patch.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OIS" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\Samples\Common\include" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\boost" /I"C:\OgreSDK\OgreSDK_vc11_v1-9-0\include\OGRE\Overlay" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt GridCell.cpp NewStitching.cpp Patch.cpp
+         GridCell.cpp
          NewStitching.cpp
      1>NewStitching.cpp(411): warning C4305: 'argument' : truncation from 'double' to 'float'
          Patch.cpp
@@ -16,8 +17,8 @@
          copy "C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\Release\\NewStitching.exe" "C:\OgreSDK\OgreSDK_vc11_v1-9-0\Bin\Release"
          :VCEnd
                  1 file(s) copied.
-     1>Done Building Project "C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\NewStitching\NewStitching.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\Users\Susana\Documents\Visual Studio 2012\Projects\NewStitching\NewStitching\NewStitching.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:01:05.85
+Time Elapsed 00:01:32.95
